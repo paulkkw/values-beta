@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Values Card Sort</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X30EBGMF70"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-X30EBGMF70');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400&family=Lato:wght@300;400;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --cream: #ede6d6;
+    --warm-mid: #8a7055;
+    --accent: #8b4513;
+    --accent-light: #c4702a;
+    --pile-not: #6b7280;
+    --pile-somewhat: #4a7c59;
+    --pile-important: #2c6b9e;
+    --pile-very: #7c3aed;
+    --pile-most: #b91c1c;
+    --shadow: rgba(26,20,16,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle paper texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 36px;
+    border-bottom: 1px solid var(--warm-mid);
+    position: relative;
+    z-index: 10;
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .lang-toggle {
+    display: flex;
+    gap: 2px;
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 3px;
+    border: 1px solid var(--warm-mid);
+  }
+
+  .lang-btn {
+    padding: 5px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+  }
+
+  .lang-btn.active {
+    background: white;
+    opacity: 1;
+    box-shadow: 0 1px 3px var(--shadow);
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    padding: 14px 36px 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--cream);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── MAIN SORTING SCREEN ── */
+  #screen-sort {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 100px);
+    padding: 20px 20px 40px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .card-stack {
+    position: relative;
+    width: 340px;
+    height: 240px;
+    margin-bottom: 48px;
+  }
+
+  .card-ghost {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: var(--cream);
+    border: 1px solid var(--warm-mid);
+    border-radius: 12px;
+  }
+
+  .card-ghost:nth-child(1) { transform: rotate(-2.5deg) translateY(6px); opacity: 0.5; }
+  .card-ghost:nth-child(2) { transform: rotate(1.2deg) translateY(3px); opacity: 0.7; }
+
+  .card-main {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: white;
+    border: 1px solid #d4c5a9;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px var(--shadow), 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 32px;
+    cursor: default;
+    transition: transform 0.15s ease;
+  }
+
+  .card-number {
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+    margin-bottom: 12px;
+  }
+
+  .card-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 500;
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.1;
+    margin-bottom: 14px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
+  }
+
+  .card-desc {
+    font-size: 0.95rem;
+    color: #4a3828;
+    text-align: center;
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  /* ── RATING BUTTONS ── */
+  .rating-area {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .rating-label {
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--warm-mid);
+    margin-bottom: 14px;
+  }
+
+  .rating-buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .rate-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    padding: 14px 6px;
+    border: 1.5px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    background: white;
+    transition: all 0.18s ease;
+    box-shadow: 0 1px 4px var(--shadow);
+  }
+
+  .rate-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow); }
+
+  .rate-btn .dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+  }
+
+  .rate-btn .btn-label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    text-align: center;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .rate-btn[data-rating="0"] .dot { background: var(--pile-not); }
+  .rate-btn[data-rating="1"] .dot { background: var(--pile-somewhat); }
+  .rate-btn[data-rating="2"] .dot { background: var(--pile-important); }
+  .rate-btn[data-rating="3"] .dot { background: var(--pile-very); }
+  .rate-btn[data-rating="4"] .dot { background: var(--pile-most); }
+
+  .rate-btn[data-rating="0"]:hover, .rate-btn[data-rating="0"].selected { border-color: var(--pile-not); background: #f3f4f6; }
+  .rate-btn[data-rating="1"]:hover, .rate-btn[data-rating="1"].selected { border-color: var(--pile-somewhat); background: #f0faf4; }
+  .rate-btn[data-rating="2"]:hover, .rate-btn[data-rating="2"].selected { border-color: var(--pile-important); background: #eff6ff; }
+  .rate-btn[data-rating="3"]:hover, .rate-btn[data-rating="3"].selected { border-color: var(--pile-very); background: #f5f3ff; }
+  .rate-btn[data-rating="4"]:hover, .rate-btn[data-rating="4"].selected { border-color: var(--pile-most); background: #fef2f2; }
+
+  /* ── REVIEW SCREEN ── */
+  #screen-review {
+    display: none;
+    padding: 32px 36px 60px;
+    position: relative;
+    z-index: 5;
+  }
+
+  .review-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .review-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .review-subtitle {
+    font-size: 0.95rem;
+    color: #4a3828;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .piles-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .pile-section {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e0d5c5;
+    overflow: hidden;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+
+  .pile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-bottom: 1px solid #e0d5c5;
+  }
+
+  .pile-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .pile-title {
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .pile-count {
+    margin-left: auto;
+    font-size: 0.85rem;
+    color: var(--warm-mid);
+    font-weight: 400;
+  }
+
+  .pile-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px 20px;
+    min-height: 52px;
+  }
+
+  .mini-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 14px;
+    background: var(--paper);
+    border-radius: 8px;
+    border: 1px solid #ddd4c0;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-width: 120px;
+  }
+
+  .mini-card:hover { transform: translateY(-1px); box-shadow: 0 3px 10px var(--shadow); }
+
+  .mini-card .mv { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; font-weight: 500; }
+  .mini-card .md { font-size: 0.75rem; color: #5a4535; margin-top: 2px; line-height: 1.3; }
+
+  /* ── RERATE MODAL ── */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,20,16,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+
+  #modal-overlay.open { display: flex; }
+
+  .modal-card {
+    background: white;
+    border-radius: 16px;
+    padding: 36px 32px;
+    width: 340px;
+    max-width: 90vw;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+    animation: modalIn 0.2s ease;
+  }
+
+  @keyframes modalIn {
+    from { transform: translateY(12px) scale(0.97); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+
+  .modal-number { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: #5a4535; margin-bottom: 8px; }
+  .modal-value { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 500; margin-bottom: 8px; }
+  .modal-desc { font-size: 0.8rem; color: #4a3828; line-height: 1.5; margin-bottom: 24px; }
+  .modal-label { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: #5a4535; margin-bottom: 10px; }
+
+  .modal-ratings {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .modal-rate-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 4px;
+    border: 1.5px solid #e0d5c5;
+    border-radius: 8px;
+    cursor: pointer;
+    background: var(--paper);
+    transition: all 0.15s;
+    font-size: 0.58rem;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .modal-rate-btn .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .modal-rate-btn[data-rating="0"] .dot { background: var(--pile-not); }
+  .modal-rate-btn[data-rating="1"] .dot { background: var(--pile-somewhat); }
+  .modal-rate-btn[data-rating="2"] .dot { background: var(--pile-important); }
+  .modal-rate-btn[data-rating="3"] .dot { background: var(--pile-very); }
+  .modal-rate-btn[data-rating="4"] .dot { background: var(--pile-most); }
+  .modal-rate-btn[data-rating="0"].selected { border-color: var(--pile-not); background: #f3f4f6; }
+  .modal-rate-btn[data-rating="1"].selected { border-color: var(--pile-somewhat); background: #f0faf4; }
+  .modal-rate-btn[data-rating="2"].selected { border-color: var(--pile-important); background: #eff6ff; }
+  .modal-rate-btn[data-rating="3"].selected { border-color: var(--pile-very); background: #f5f3ff; }
+  .modal-rate-btn[data-rating="4"].selected { border-color: var(--pile-most); background: #fef2f2; }
+
+  .modal-close {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid var(--warm-mid);
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    color: var(--ink);
+    transition: background 0.15s;
+  }
+
+  .modal-close:hover { background: var(--cream); }
+
+  /* ── MOST IMPORTANT ALERT ── */
+  .most-alert {
+    display: none;
+    background: #fef3cd;
+    border: 1px solid #f0c040;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 0.78rem;
+    color: #7a5c00;
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 780px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  .most-alert.show { display: block; }
+
+  /* ── INTRO SCREEN ── */
+  #screen-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    padding: 40px 24px;
+    text-align: center;
+    position: relative;
+    z-index: 5;
+  }
+
+  .intro-ornament {
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+    opacity: 0.6;
+  }
+
+  .intro-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.6rem;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 10px;
+    max-width: 520px;
+  }
+
+  .intro-title-zh {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+
+  .intro-body {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #4a3828;
+    max-width: 460px;
+    margin-bottom: 36px;
+  }
+
+  .start-btn {
+    padding: 15px 52px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(139,69,19,0.3);
+  }
+
+  .start-btn:hover { background: #7a3b10; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(139,69,19,0.35); }
+
+  /* ── ATTRIBUTION ── */
+  .intro-attribution {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd4c0;
+    max-width: 420px;
+    text-align: center;
+  }
+
+  .intro-attribution p {
+    font-size: 0.82rem;
+    color: #6b5040;
+    line-height: 1.7;
+    margin-bottom: 4px;
+  }
+
+  .intro-attribution a {
+    color: var(--accent-light);
+    text-decoration: none;
+  }
+  .intro-attribution a:hover { text-decoration: underline; }
+
+  /* ── KO-FI BUTTON ── */
+  .kofi-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    padding: 11px 24px;
+    background: transparent;
+    border: 1.5px solid #c4702a;
+    border-radius: 8px;
+    color: #c4702a;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .kofi-btn:hover {
+    background: #c4702a;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(196,112,42,0.3);
+    text-decoration: none;
+  }
+  .kofi-btn .kofi-icon { font-size: 1rem; }
+
+  /* Ko-fi block inside infographic modal */
+  .kofi-infographic-block {
+    padding: 16px 20px;
+    background: #fdf8f2;
+    border-top: 1px solid #e0d5c5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .kofi-infographic-block .kofi-msg {
+    font-size: 0.78rem;
+    color: #4a3828;
+    line-height: 1.5;
+  }
+
+  .kofi-infographic-block .kofi-msg strong {
+    display: block;
+    color: var(--ink);
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+  }
+
+  .kofi-btn-filled {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s;
+    box-shadow: 0 3px 10px rgba(139,69,19,0.28);
+  }
+  .kofi-btn-filled:hover {
+    background: #7a3b10;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 16px rgba(139,69,19,0.35);
+    text-decoration: none;
+    color: white;
+  }
+
+  /* ── NOTES JOURNAL ── */
+  .notes-fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    height: 46px;
+    padding: 0 20px;
+    border-radius: 23px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(139,69,19,0.4);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .notes-fab:hover { background: #7a3b10; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(139,69,19,0.45); }
+  .notes-fab .notes-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 18px;
+    height: 18px;
+    background: #7c3aed;
+    border-radius: 50%;
+    font-size: 0.6rem;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--paper);
+  }
+  .notes-fab .notes-badge.show { display: flex; }
+
+  #notes-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,20,16,0.55);
+    z-index: 150;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 24px;
+    backdrop-filter: blur(4px);
+  }
+  #notes-overlay.open { display: flex; }
+
+  .notes-panel {
+    background: white;
+    border-radius: 16px;
+    width: 400px;
+    max-width: calc(100vw - 32px);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+    animation: modalIn 0.2s ease;
+    overflow: hidden;
+  }
+
+  .notes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0d5c5;
+    background: var(--paper);
+    flex-shrink: 0;
+  }
+
+  .notes-header-left { display: flex; flex-direction: column; gap: 2px; }
+  .notes-header-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 500; color: var(--ink); }
+  .notes-header-sub { font-size: 0.78rem; color: #5a4535; }
+
+  .notes-header-actions { display: flex; gap: 6px; }
+
+  .notes-dl-btn {
+    padding: 7px 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .notes-dl-btn:hover { background: #7a3b10; }
+
+  .notes-close-btn {
+    padding: 7px 12px;
+    background: transparent;
+    color: #5a4535;
+    border: 1px solid #8a7055;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .notes-close-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+  .notes-context-tag {
+    padding: 8px 20px;
+    background: #f9f5ee;
+    border-bottom: 1px solid #e8e0d0;
+    font-size: 0.7rem;
+    color: #5a4535;
+    font-style: italic;
+    flex-shrink: 0;
+  }
+
+  .notes-entries {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .note-entry {
+    background: var(--paper);
+    border-radius: 8px;
+    padding: 10px 14px;
+    border: 1px solid #e0d5c5;
+  }
+
+  .note-entry-meta {
+    font-size: 0.75rem;
+    color: #5a4535;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .note-entry-delete {
+    background: none;
+    border: none;
+    color: #8a6040;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s;
+  }
+  .note-entry-delete:hover { color: #b91c1c; }
+
+  .note-entry-text {
+    font-size: 0.9rem;
+    color: var(--ink);
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+
+  .notes-empty {
+    text-align: center;
+    color: #5a4535;
+    font-size: 0.9rem;
+    font-style: italic;
+    padding: 24px 0;
+  }
+
+  .notes-input-area {
+    padding: 12px 16px;
+    border-top: 1px solid #e0d5c5;
+    background: white;
+    flex-shrink: 0;
+  }
+
+  .notes-textarea {
+    width: 100%;
+    min-height: 88px;
+    border: 1px solid #d4c5a9;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--paper);
+    resize: vertical;
+    outline: none;
+    line-height: 1.5;
+    transition: border-color 0.15s;
+  }
+  .notes-textarea:focus { border-color: var(--accent); }
+
+  .notes-submit-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .notes-submit-btn {
+    padding: 9px 22px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .notes-submit-btn:hover { background: #7a3b10; }
+
+  /* Persistent footer */
+  #site-footer {
+    position: relative;
+    z-index: 10;
+    border-top: 1px solid #ddd4c0;
+    padding: 14px 36px;
+    text-align: center;
+    background: var(--paper);
+  }
+
+  #site-footer p {
+    font-size: 0.78rem;
+    color: #6b5040;
+    line-height: 1.65;
+  }
+
+  #site-footer a {
+    color: var(--accent-light);
+    text-decoration: none;
+  }
+  #site-footer a:hover { text-decoration: underline; }
+
+  .footer-feedback {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e8dfd0;
+  }
+
+  /* ── DONE SCREEN ── */
+  #screen-done {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px);
+    padding: 40px 24px;
+    text-align: center;
+    position: relative;
+    z-index: 5;
+  }
+
+  .done-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+
+  .done-body {
+    font-size: 0.88rem;
+    color: #4a3828;
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 32px;
+  }
+
+  .review-btn {
+    padding: 14px 48px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(139,69,19,0.3);
+    margin-bottom: 14px;
+  }
+
+  .review-btn:hover { background: #7a3b10; transform: translateY(-1px); }
+
+  .restart-btn {
+    padding: 10px 32px;
+    background: transparent;
+    color: var(--warm-mid);
+    border: 1px solid var(--warm-mid);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .restart-btn:hover { color: var(--ink); border-color: var(--ink); }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #5a4535;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 0;
+    transition: color 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+  }
+
+  .back-btn:hover { color: var(--ink); }
+
+  .empty-pile { color: #6b5a45; font-size: 0.78rem; font-style: italic; }
+
+  /* ── INFOGRAPHIC BUTTON ── */
+  .infographic-wrap {
+    max-width: 780px;
+    margin: 0 auto 28px;
+  }
+
+  .infographic-btn {
+    width: 100%;
+    padding: 15px 24px;
+    background: linear-gradient(135deg, #2d1a0e 0%, #8b4513 60%, #c4702a 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 18px rgba(139,69,19,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .infographic-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(139,69,19,0.42); }
+  .infographic-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .infographic-btn .btn-icon { font-size: 1.2rem; }
+
+  .infographic-hint {
+    font-size: 0.78rem;
+    color: #5a4535;
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* ── INFOGRAPHIC OVERLAY ── */
+  #infographic-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,7,4,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(6px);
+    padding: 20px;
+  }
+  #infographic-overlay.open { display: flex; }
+
+  .infographic-modal {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+    max-width: 560px;
+    width: 100%;
+    animation: modalIn 0.25s ease;
+  }
+
+  .infographic-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid #e0d5c5;
+    background: var(--paper);
+  }
+
+  .infographic-toolbar-title {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .toolbar-actions { display: flex; gap: 8px; }
+
+  .dl-btn {
+    padding: 7px 16px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .dl-btn:hover { background: #7a3b10; }
+
+  .close-infographic {
+    padding: 7px 14px;
+    background: transparent;
+    color: var(--warm-mid);
+    border: 1px solid var(--warm-mid);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .close-infographic:hover { color: var(--ink); border-color: var(--ink); }
+
+  #infographic-canvas-wrap {
+    width: 100%;
+    overflow: hidden;
+  }
+  #infographic-canvas-wrap canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* ── SORT NAV (back button row) ── */
+  .sort-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 12px;
+  }
+
+  .sort-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.78rem;
+    color: #5a4535;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px 0;
+    transition: color 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+  }
+
+  .sort-back-btn:hover { color: var(--ink); }
+  .sort-back-btn:disabled { opacity: 0.35; cursor: default; }
+
+  /* Card flip animation */
+  @keyframes cardFlip {
+    0% { transform: scale(1); opacity: 1; }
+    40% { transform: scale(0.9) rotateY(20deg); opacity: 0.5; }
+    41% { transform: scale(0.9) rotateY(-20deg); opacity: 0; }
+    100% { transform: scale(1) rotateY(0); opacity: 1; }
+  }
+
+  .card-animating { animation: cardFlip 0.35s ease; }
+
+  /* ── RESTART CONFIRM DIALOG ── */
+  #confirm-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,20,16,0.55);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  #confirm-overlay.open { display: flex; }
+
+  .confirm-dialog {
+    background: white;
+    border-radius: 16px;
+    padding: 36px 32px 28px;
+    width: 360px;
+    max-width: 90vw;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+    animation: modalIn 0.2s ease;
+    text-align: center;
+  }
+
+  .confirm-icon {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    line-height: 1;
+  }
+
+  .confirm-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  .confirm-body {
+    font-size: 0.82rem;
+    color: #4a3828;
+    line-height: 1.65;
+    margin-bottom: 28px;
+  }
+
+  .confirm-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .confirm-yes {
+    padding: 12px 24px;
+    background: #b91c1c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .confirm-yes:hover { background: #991515; }
+
+  .confirm-no {
+    padding: 12px 24px;
+    background: transparent;
+    color: var(--ink);
+    border: 1.5px solid var(--warm-mid);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .confirm-no:hover { border-color: var(--ink); }
+
+  /* ── RESUME SESSION MODAL ── */
+  #resume-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,20,16,0.55);
+    z-index: 400;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  #resume-overlay.open { display: flex; }
+
+  .resume-dialog {
+    background: white;
+    border-radius: 16px;
+    padding: 36px 32px 28px;
+    width: 380px;
+    max-width: 92vw;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+    animation: modalIn 0.2s ease;
+    text-align: center;
+  }
+
+  .resume-icon { font-size: 2rem; margin-bottom: 14px; line-height: 1; }
+  .resume-title { font-family: 'Cormorant Garamond', serif; font-size: 1.55rem; font-weight: 500; color: var(--ink); margin-bottom: 10px; }
+  .resume-body { font-size: 0.85rem; color: #4a3828; line-height: 1.65; margin-bottom: 10px; }
+  .resume-meta { font-size: 0.78rem; color: #5a4535; margin-bottom: 26px; font-style: italic; }
+
+  .resume-actions { display: flex; flex-direction: column; gap: 10px; }
+
+  .resume-continue {
+    padding: 13px 24px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .resume-continue:hover { background: #7a3b10; }
+
+  .resume-fresh {
+    padding: 13px 24px;
+    background: transparent;
+    color: var(--warm-mid);
+    border: 1.5px solid var(--warm-mid);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .resume-fresh:hover { color: var(--ink); border-color: var(--ink); }
+  #screen-done .review-btn { margin-bottom: 8px; }
+  #screen-done .restart-btn { margin-top: 16px; color: #5a4535; font-size: 0.75rem; border-color: #8a7055; }
+
+  /* ── MOBILE RESPONSIVE ── */
+  @media (max-width: 600px) {
+
+    /* Raise root — scales ALL rem values up proportionally */
+    html { font-size: 17px; }
+
+    /* Header */
+    header { padding: 14px 18px; }
+    .logo { font-size: 1rem; }
+    .lang-btn { font-size: 0.88rem; }
+
+    /* Progress */
+    .progress-wrap { padding: 10px 18px 0; }
+    .progress-meta { font-size: 0.82rem; }
+
+    /* Sorting screen */
+    #screen-sort {
+      padding: 16px 14px 32px;
+      min-height: calc(100vh - 90px);
+      justify-content: flex-start;
+      padding-top: 24px;
+    }
+
+    /* Card stack — fill the screen width */
+    .card-stack {
+      width: calc(100vw - 36px);
+      height: 220px;
+      margin-bottom: 28px;
+    }
+
+    .card-main { padding: 22px 20px; }
+    .card-value { font-size: 2.2rem; }
+    .card-desc { font-size: 0.95rem; }
+    .card-number { font-size: 0.8rem; }
+
+    /* Rating buttons */
+    .rating-area { max-width: 100%; padding: 0 2px; }
+    .rating-label { font-size: 0.85rem; margin-bottom: 10px; }
+
+    .rating-buttons {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+    }
+
+    .rate-btn {
+      padding: 11px 3px;
+      border-radius: 8px;
+      gap: 6px;
+    }
+
+    .rate-btn .dot { width: 11px; height: 11px; }
+    .rate-btn .btn-label { font-size: 0.75rem; }
+
+    /* Sort nav */
+    .sort-back-btn { font-size: 0.82rem; }
+
+    /* Intro screen */
+    #screen-intro { padding: 28px 18px; min-height: calc(100vh - 70px); }
+    .intro-ornament { font-size: 1.8rem; margin-bottom: 16px; }
+    .intro-title { font-size: 2.2rem; }
+    .intro-body { font-size: 0.95rem; margin-bottom: 24px; }
+    .intro-attribution { max-width: 100%; }
+    .intro-attribution p { font-size: 0.78rem; }
+    .start-btn { font-size: 0.95rem; padding: 13px 40px; }
+    .kofi-btn { font-size: 0.85rem; }
+
+    /* Done screen */
+    #screen-done { padding: 28px 18px; }
+    .done-title { font-size: 1.9rem; }
+    .done-body { font-size: 0.95rem; margin-bottom: 24px; }
+    .review-btn { padding: 13px 32px; width: 100%; font-size: 0.95rem; }
+    .restart-btn { width: 100%; text-align: center; font-size: 0.82rem; }
+
+    /* Review screen */
+    #screen-review { padding: 20px 14px 100px; }
+    .review-title { font-size: 1.8rem; }
+    .review-subtitle { font-size: 0.88rem; }
+    .pile-title { font-size: 0.9rem; }
+    .pile-count { font-size: 0.82rem; }
+    .mini-card { min-width: 110px; }
+    .mini-card .mv { font-size: 1.1rem; }
+    .mini-card .md { font-size: 0.75rem; }
+    .empty-pile { font-size: 0.85rem; }
+    .most-alert { font-size: 0.82rem; }
+    .back-btn { font-size: 0.85rem; }
+
+    /* Infographic button */
+    .infographic-btn { font-size: 0.95rem; padding: 13px 16px; }
+    .infographic-hint { font-size: 0.78rem; }
+    .dl-tip { font-size: 0.78rem; }
+
+    /* Ko-fi infographic block — stack vertically */
+    .kofi-infographic-block {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .kofi-infographic-block .kofi-msg { font-size: 0.88rem; }
+    .kofi-btn-filled { width: 100%; justify-content: center; font-size: 0.88rem; }
+
+    /* Modal (re-rate) */
+    .modal-card { width: calc(100vw - 32px); padding: 28px 20px; }
+    .modal-value { font-size: 1.8rem; }
+    .modal-desc { font-size: 0.85rem; }
+    .modal-rate-btn { font-size: 0.65rem; padding: 9px 3px; }
+    .modal-close { font-size: 0.9rem; }
+
+    /* Notes panel — slides up from bottom */
+    .notes-panel { width: 100%; border-radius: 16px 16px 0 0; }
+    #notes-overlay { align-items: flex-end; padding: 0; }
+    .notes-header-title { font-size: 1.1rem; }
+    .notes-header-sub { font-size: 0.78rem; }
+    .notes-dl-btn { font-size: 0.82rem; }
+    .notes-close-btn { font-size: 0.82rem; }
+    .notes-context-tag { font-size: 0.78rem; }
+    .note-entry-text { font-size: 0.9rem; }
+    .note-entry-meta { font-size: 0.75rem; }
+    .notes-textarea { font-size: 0.95rem; min-height: 80px; }
+    .notes-submit-btn { font-size: 0.9rem; }
+    .notes-empty { font-size: 0.88rem; }
+    .notes-dl-tip { font-size: 0.75rem; }
+
+    /* Notes FAB */
+    .notes-fab {
+      bottom: 16px;
+      right: 14px;
+      height: 40px;
+      padding: 0 15px;
+      font-size: 0.8rem;
+    }
+
+    /* Infographic overlay toolbar */
+    .infographic-toolbar { flex-wrap: wrap; gap: 8px; }
+    .infographic-toolbar-title { font-size: 0.88rem; }
+    .toolbar-actions { flex-wrap: wrap; gap: 6px; }
+    .dl-btn { font-size: 0.82rem; }
+    .close-infographic { font-size: 0.82rem; }
+
+    /* Footer */
+    #site-footer { padding: 12px 18px; font-size: 0.72rem; }
+
+    /* Confirm dialog */
+    .confirm-dialog { padding: 28px 20px 22px; }
+    .confirm-title { font-size: 1.4rem; }
+    .confirm-body { font-size: 0.9rem; }
+    .confirm-yes { font-size: 0.9rem; }
+    .confirm-no { font-size: 0.9rem; }
+
+    /* Resume dialog */
+    .resume-title { font-size: 1.4rem; }
+    .resume-body { font-size: 0.9rem; }
+    .resume-meta { font-size: 0.8rem; }
+    .resume-continue { font-size: 0.9rem; }
+    .resume-fresh { font-size: 0.9rem; }
+  }
+
+  /* Very small screens (e.g. iPhone SE 375px) */
+  @media (max-width: 390px) {
+    html { font-size: 16px; }
+    .rating-buttons { gap: 4px; }
+    .rate-btn { padding: 9px 2px; }
+    .rate-btn .btn-label { font-size: 0.72rem; }
+    .card-value { font-size: 2rem; }
+    .card-stack { height: 205px; }
+  }
+
+  /* ── DOWNLOAD TIPS ── */
+  .dl-tip {
+    padding: 8px 20px;
+    background: #f9f6f0;
+    border-bottom: 1px solid #e0d5c5;
+    font-size: 0.72rem;
+    color: #8a7560;
+    text-align: center;
+    line-height: 1.55;
+    font-style: italic;
+    display: none;
+  }
+  .dl-tip.visible { display: block; }
+
+  .notes-dl-tip {
+    padding: 8px 16px;
+    background: #faf7f2;
+    border-top: 1px solid #e8e0d0;
+    font-size: 0.7rem;
+    color: #a08060;
+    text-align: center;
+    line-height: 1.5;
+    font-style: italic;
+    flex-shrink: 0;
+    display: none;
+  }
+  .notes-dl-tip.visible { display: block; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo" id="header-logo">Personal Values</div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('zh')">繁中</button>
+    <button class="lang-btn" onclick="setLang('zhS')">简中</button>
+  </div>
+</header>
+
+<!-- PROGRESS (hidden on intro/done) -->
+<div class="progress-wrap" id="progress-wrap" style="display:none">
+  <div class="progress-meta">
+    <span id="progress-label">Card 1 of 100</span>
+    <span id="progress-pct">0%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+</div>
+
+<!-- INTRO SCREEN -->
+<div id="screen-intro">
+  <div class="intro-ornament">✦</div>
+  <div class="intro-title" id="intro-title">Personal Values<br>Card Sort</div>
+  <div class="intro-title-zh" id="intro-subtitle" style="display:none">探索價值觀和目標</div>
+  <div class="intro-body" id="intro-body">
+    You will see 100 value cards, one at a time. For each card, decide how important this value is to you in your life. There are no right or wrong answers — only what feels true to you.<br><br>
+    After sorting all cards, you can review each pile and re-rate any card. Try to keep your <em>Most Important</em> pile to just 3–5 cards.
+  </div>
+  <button class="start-btn" onclick="startSort()" id="start-btn">Begin</button>
+  <div class="intro-attribution" id="intro-attribution">
+    <p id="attr-original"></p>
+    <p id="attr-translation"></p>
+    <p id="attr-chinese"></p>
+    <a href="https://ko-fi.com/drpaulkong" target="_blank" class="kofi-btn" id="kofi-btn-intro" onclick="track('kofi_clicked',{location:'intro',language:lang})">
+      <span class="kofi-icon">🌱</span>
+      <span id="kofi-label-intro">Support This Work</span>
+    </a>
+  </div>
+</div>
+
+<!-- SORTING SCREEN -->
+<div id="screen-sort" style="display:none">
+  <div class="card-stack">
+    <div class="card-ghost"></div>
+    <div class="card-ghost"></div>
+    <div class="card-main" id="card-main">
+      <div class="card-number" id="card-num">1 / 100</div>
+      <div class="card-value" id="card-value">—</div>
+      <div class="card-desc" id="card-desc">—</div>
+    </div>
+  </div>
+
+  <div class="rating-area">
+    <div class="sort-nav">
+      <button class="sort-back-btn" id="sort-back-btn" onclick="goBack()" disabled>← <span id="sort-back-label">Previous card</span></button>
+      <button class="sort-back-btn" style="margin-left:auto; opacity:0.55;" onclick="confirmRestart()" id="sort-restart-btn"><span id="sort-restart-label">Start Over</span> ↺</button>
+    </div>
+    <div class="rating-label" id="rating-label">How important is this value to you?</div>
+    <div class="rating-buttons" id="rating-buttons">
+      <button class="rate-btn" data-rating="0" onclick="rate(0)">
+        <div class="dot"></div>
+        <div class="btn-label" id="lbl0">Not Important</div>
+      </button>
+      <button class="rate-btn" data-rating="1" onclick="rate(1)">
+        <div class="dot"></div>
+        <div class="btn-label" id="lbl1">Somewhat Important</div>
+      </button>
+      <button class="rate-btn" data-rating="2" onclick="rate(2)">
+        <div class="dot"></div>
+        <div class="btn-label" id="lbl2">Important</div>
+      </button>
+      <button class="rate-btn" data-rating="3" onclick="rate(3)">
+        <div class="dot"></div>
+        <div class="btn-label" id="lbl3">Very Important</div>
+      </button>
+      <button class="rate-btn" data-rating="4" onclick="rate(4)">
+        <div class="dot"></div>
+        <div class="btn-label" id="lbl4">Most Important</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DONE SCREEN -->
+<div id="screen-done">
+  <div class="intro-ornament">✦</div>
+  <div class="done-title" id="done-title">You've sorted all 100 cards</div>
+  <div class="done-body" id="done-body">
+    Now you can review each pile and move cards around. Try to narrow your <em>Most Important</em> pile to just 3–5 values that truly define what matters most to you.
+  </div>
+  <button class="review-btn" onclick="showReview()" id="review-btn-done">Review My Values</button>
+  <button class="restart-btn" onclick="confirmRestart()" id="restart-btn">Start Over</button>
+</div>
+
+<!-- RESTART CONFIRM DIALOG -->
+<div id="confirm-overlay">
+  <div class="confirm-dialog">
+    <div class="confirm-icon">⚠️</div>
+    <div class="confirm-title" id="confirm-title">Start Over?</div>
+    <div class="confirm-body" id="confirm-body">All your card ratings and notes will be lost. This cannot be undone.</div>
+    <div class="confirm-actions">
+      <button class="confirm-no" id="confirm-no">Keep My Results</button>
+      <button class="confirm-yes" id="confirm-yes">Yes, Start Over</button>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW SCREEN -->
+<div id="screen-review">
+  <div class="review-header">
+    <button class="back-btn" onclick="showDone()" id="back-btn">← <span id="back-label">Back</span></button>
+    <div class="review-title" id="review-title">My Values</div>
+    <div class="review-subtitle" id="review-subtitle">Tap any card to change its rating. Aim for 3–5 cards in the Most Important pile.</div>
+  </div>
+
+  <div class="most-alert" id="most-alert"></div>
+
+  <div class="infographic-wrap show" id="infographic-wrap">
+    <div class="infographic-hint" id="infographic-hint"></div>
+    <button class="infographic-btn" onclick="generateInfographic()" id="infographic-btn">
+      <span class="btn-icon">✦</span>
+      <span id="infographic-btn-label">Generate My Values Infographic</span>
+    </button>
+  </div>
+
+  <div class="piles-grid" id="piles-grid"></div>
+</div>
+
+<!-- INFOGRAPHIC OVERLAY -->
+<div id="infographic-overlay" onclick="closeInfographic(event)">
+  <div class="infographic-modal" onclick="event.stopPropagation()">
+    <div class="infographic-toolbar">
+      <div class="infographic-toolbar-title" id="toolbar-title">My Values</div>
+      <div class="toolbar-actions">
+        <button class="dl-btn" id="dl-btn" onclick="downloadInfographic()">⬇ Download</button>
+        <button class="close-infographic" id="close-infographic-btn" onclick="closeInfographic()">Close</button>
+      </div>
+    </div>
+    <div class="dl-tip" id="dl-tip"></div>
+    <div id="infographic-canvas-wrap"></div>
+    <div class="kofi-infographic-block">
+      <div class="kofi-msg">
+        <strong id="kofi-infographic-title">Enjoyed this tool?</strong>
+        <span id="kofi-infographic-body">This app is free. Support further development with any amount you choose.</span>
+      </div>
+      <a href="https://ko-fi.com/drpaulkong" target="_blank" class="kofi-btn-filled" id="kofi-btn-infographic" onclick="track('kofi_clicked',{location:'infographic',language:lang})">
+        <span>🌱</span>
+        <span id="kofi-label-infographic">Support This Work</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <div class="modal-number" id="modal-num"></div>
+    <div class="modal-value" id="modal-value"></div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <div class="modal-label" id="modal-qlabel">Change rating:</div>
+    <div class="modal-ratings" id="modal-ratings">
+      <button class="modal-rate-btn" data-rating="0" onclick="reRate(0)"><div class="dot"></div><span id="mlbl0">Not<br>Important</span></button>
+      <button class="modal-rate-btn" data-rating="1" onclick="reRate(1)"><div class="dot"></div><span id="mlbl1">Somewhat<br>Important</span></button>
+      <button class="modal-rate-btn" data-rating="2" onclick="reRate(2)"><div class="dot"></div><span id="mlbl2">Important</span></button>
+      <button class="modal-rate-btn" data-rating="3" onclick="reRate(3)"><div class="dot"></div><span id="mlbl3">Very<br>Important</span></button>
+      <button class="modal-rate-btn" data-rating="4" onclick="reRate(4)"><div class="dot"></div><span id="mlbl4">Most<br>Important</span></button>
+    </div>
+    <button class="modal-close" id="modal-close-btn" onclick="closeModal()">Done</button>
+  </div>
+</div>
+
+<script>
+const VALUES = [
+  {en:"ACCEPTANCE",zh:"接納",zhS:"接纳",enD:"to be accepted as I am",zhD:"被接納做真實的自己",zhSD:"别人接纳我本真的样子"},
+  {en:"ACCURACY",zh:"準確",zhS:"缜密",enD:"to be correct in my opinions and beliefs",zhD:"擁有正確的觀點和信念",zhSD:"要确保自己的观点和信念是正确的"},
+  {en:"ACHIEVEMENT",zh:"成就",zhS:"成就",enD:"to have important accomplishments",zhD:"擁有重要的成就",zhSD:"有重要的成就和建树"},
+  {en:"ADVENTURE",zh:"追求刺激",zhS:"历险",enD:"to have new and exciting experiences",zhD:"擁有新奇刺激的經歷",zhSD:"拥有全新的、激动人心的经历"},
+  {en:"ART",zh:"藝術",zhS:"艺术",enD:"to appreciate or express myself in art",zhD:"透過藝術欣賞或表達自己",zhSD:"通过艺术来理解和表达自我"},
+  {en:"ATTRACTIVENESS",zh:"吸引力",zhS:"吸引力",enD:"to be physically attractive",zhD:"外表有吸引力",zhSD:"外表有吸引力"},
+  {en:"AUTHORITY",zh:"權威",zhS:"权威",enD:"to be in charge of others",zhD:"掌管他人",zhSD:"主管别人，对别人负责"},
+  {en:"AUTONOMY",zh:"自主",zhS:"自主",enD:"to be self-determined and independent",zhD:"自己做決定、獨立",zhSD:"自己决定、自己独立"},
+  {en:"BEAUTY",zh:"美麗",zhS:"美",enD:"to appreciate beauty around me",zhD:"欣賞周圍的美",zhSD:"欣赏身边的美好事物"},
+  {en:"BELONGING",zh:"歸屬感",zhS:"归属",enD:"to have a sense of belonging, being part of a group",zhD:"擁有對社群或團體的歸屬感，成為團體的一份子",zhSD:"有归属感，感觉自己是其中的一分子"},
+  {en:"CARING",zh:"關懷",zhS:"关怀",enD:"to take care of others",zhD:"照顧他人",zhSD:"关心照顾别人"},
+  {en:"CHALLENGE",zh:"挑戰",zhS:"挑战",enD:"to take on difficult tasks and problems",zhD:"敢於面對困難的任務和問題",zhSD:"担负困难的任务"},
+  {en:"COMFORT",zh:"舒適",zhS:"舒心",enD:"to have a pleasant and comfortable life",zhD:"擁有愉快舒適的生活",zhSD:"拥有愉快舒适的生活"},
+  {en:"COMMITMENT",zh:"承諾",zhS:"承诺",enD:"to make enduring, meaningful commitments",zhD:"作出持久、有意義的承諾",zhSD:"一诺恒久、一诺坚定"},
+  {en:"COMPASSION",zh:"慈愛",zhS:"至诚为人",enD:"to feel and act on concern for others",zhD:"感受並採取行動以關心他人",zhSD:"关心别人，并落实到行动上"},
+  {en:"COMPLEXITY",zh:"複雜性",zhS:"复杂性",enD:"to embrace the intricacies of life",zhD:"欣然接受生活的錯綜複雜",zhSD:"拥抱生活的纷繁复杂"},
+  {en:"COMPROMISE",zh:"妥協",zhS:"妥协",enD:"to be willing to give and take in reaching agreements",zhD:"願意讓步以達成協議",zhSD:"愿意做出妥协让步，以达成共识"},
+  {en:"CONTRIBUTION",zh:"貢獻",zhS:"贡献",enD:"to make a lasting contribution in the world",zhD:"為世界上作出重大貢獻",zhSD:"为人世间做出恒久的贡献"},
+  {en:"COOPERATION",zh:"合作",zhS:"合作",enD:"to work collaboratively with others",zhD:"與他人共同努力",zhSD:"与别人共同协作"},
+  {en:"COURAGE",zh:"勇氣",zhS:"勇气",enD:"to be brave and strong in the face of adversity",zhD:"逆景當中保持勇敢不屈",zhSD:"面对逆境，勇敢坚强"},
+  {en:"COURTESY",zh:"禮貌",zhS:"礼貌",enD:"to be considerate and polite toward others",zhD:"對他人體貼有禮",zhSD:"对人周到有礼貌"},
+  {en:"CREATIVITY",zh:"創造力",zhS:"创新",enD:"to create new things or ideas",zhD:"創作新事物或新思維",zhSD:"有新点子、原创观点"},
+  {en:"CURIOSITY",zh:"好奇心",zhS:"好奇心",enD:"to seek out, experience and learn new things",zhD:"尋求、體驗和學習新事物",zhSD:"寻找、体验和学习新事物"},
+  {en:"DEPENDABILITY",zh:"可靠",zhS:"可靠",enD:"to be reliable and trustworthy",zhD:"值得信賴",zhSD:"为人可靠、值得信赖"},
+  {en:"DILIGENCE",zh:"勤奮",zhS:"努力",enD:"to be thorough and conscientious in whatever I do",zhD:"盡責認真地完成事情",zhSD:"无论做什么事，我都认真仔细，尽职尽责"},
+  {en:"DUTY",zh:"責任",zhS:"职责",enD:"to carry out my duties and obligations",zhD:"履行我的職責和義務",zhSD:"落实我的职责与义务"},
+  {en:"ECOLOGY",zh:"生態",zhS:"生态",enD:"to live in harmony with the environment",zhD:"與環境和諧共處",zhSD:"与环境和谐相处"},
+  {en:"EXCITEMENT",zh:"刺激",zhS:"激昂",enD:"to have a life full of thrills and stimulation",zhD:"追求充滿驚險與刺激的生活",zhSD:"生活里充满了激动昂扬、鼓舞人心的时刻"},
+  {en:"FAITHFULNESS",zh:"忠誠",zhS:"忠诚",enD:"to be loyal and true in relationships",zhD:"在人際關係中忠實",zhSD:"在人际关系中忠诚实在"},
+  {en:"FAME",zh:"名聲",zhS:"名誉",enD:"to be known and recognized",zhD:"追求被人認識和讚譽",zhSD:"知名，获得大众的认可"},
+  {en:"FAMILY",zh:"家庭",zhS:"家庭",enD:"to have a happy, loving family",zhD:"擁有幸福美滿的家庭",zhSD:"家庭幸福，家人有爱"},
+  {en:"FITNESS",zh:"良好體魄",zhS:"强健",enD:"to be physically fit and strong",zhD:"保持體格健壯",zhSD:"身体强健"},
+  {en:"FLEXIBILITY",zh:"靈活",zhS:"灵活",enD:"to adjust to new circumstances easily",zhD:"能輕鬆適應新情況",zhSD:"轻松适应新环境"},
+  {en:"FORGIVENESS",zh:"寬恕",zhS:"谅解",enD:"to be forgiving of others",zhD:"願意寬恕、諒解他人",zhSD:"对人宽宏大量"},
+  {en:"FREEDOM",zh:"自由",zhS:"自由",enD:"to be free from undue restrictions and limitations",zhD:"不受限制所束縛",zhSD:"避免多余的、不合理的限制和束缚"},
+  {en:"FRIENDSHIP",zh:"友誼",zhS:"友谊",enD:"to have close, supportive friends",zhD:"擁有親密、值得依靠的朋友",zhSD:"拥有关系紧密、支持自己的朋友们"},
+  {en:"FUN",zh:"樂趣",zhS:"趣味",enD:"to play and have fun",zhD:"玩樂與享受",zhSD:"玩耍并体会到趣味"},
+  {en:"GENEROSITY",zh:"慷慨",zhS:"慷慨",enD:"to give what I have to others",zhD:"將我所擁有的分享給他人",zhSD:"将我所拥有分享给别人"},
+  {en:"GENUINENESS",zh:"真誠",zhS:"真诚",enD:"to act in a manner that is true to who I am",zhD:"以真實自我行事",zhSD:"言行符合自己内心真实的想法"},
+  {en:"GOD'S WILL",zh:"順從神意",zhS:"知天命",enD:"to seek and obey the will of God",zhD:"尋求並遵循上帝的旨意",zhSD:"寻求并服从天意"},
+  {en:"GRATITUDE",zh:"感恩",zhS:"感恩",enD:"to be thankful and appreciative",zhD:"心存感激與欣賞",zhSD:"心存感激，表达感谢"},
+  {en:"GROWTH",zh:"成長",zhS:"成长",enD:"to keep changing and growing",zhD:"不斷改變與成長",zhSD:"持续改变、成长"},
+  {en:"HEALTH",zh:"健康",zhS:"健康",enD:"to be physically well and healthy",zhD:"保持身體安好和健康",zhSD:"身体健康"},
+  {en:"HONESTY",zh:"誠實",zhS:"诚实",enD:"to be honest and truthful",zhD:"誠實與真實",zhSD:"为人诚恳、真实"},
+  {en:"HOPE",zh:"希望",zhS:"希望",enD:"to maintain a positive and optimistic outlook",zhD:"保持正向與樂觀的態度",zhSD:"保持积极乐观的期望"},
+  {en:"HUMILITY",zh:"謙遜",zhS:"谦和",enD:"to be modest and unassuming",zhD:"謙虛不張揚",zhSD:"为人谦和、平实"},
+  {en:"HUMOR",zh:"幽默",zhS:"幽默",enD:"to see the humorous side of myself and the world",zhD:"看到自己與世界的幽默面",zhSD:"品出自己与世界幽默的一面"},
+  {en:"IMAGINATION",zh:"想像力",zhS:"想象力",enD:"to have dreams and see possibilities",zhD:"擁有夢想並看見可能性",zhSD:"心怀梦想并看得见各种机会和可能性"},
+  {en:"INDEPENDENCE",zh:"獨立",zhS:"独立",enD:"to be free from depending on others",zhD:"不依賴他人",zhSD:"不依赖其他人"},
+  {en:"INDUSTRY",zh:"勤勞",zhS:"勤奋",enD:"to work hard and well at my life tasks",zhD:"努力並優秀地完成生活中需處理的事務",zhSD:"辛勤努力，做好自己的日常工作"},
+  {en:"INNER PEACE",zh:"內心平靜",zhS:"内心平静",enD:"to experience personal peace",zhD:"享受內在的平和",zhSD:"体验到内心的平安"},
+  {en:"INTEGRITY",zh:"誠信",zhS:"表里如一",enD:"to live my daily life consistent with my values",zhD:"日常生活與價值觀一致",zhSD:"在日常生活中遵循并践行自己的价值观"},
+  {en:"INTELLIGENCE",zh:"智慧",zhS:"睿智",enD:"to keep my mind sharp and active",zhD:"保持頭腦敏銳活躍",zhSD:"保持头脑的敏锐与活跃"},
+  {en:"INTIMACY",zh:"親密",zhS:"亲密",enD:"to share my innermost experiences with others",zhD:"與他人分享內心經歷",zhSD:"跟别人分享我内心最深处的体验"},
+  {en:"JUSTICE",zh:"正義",zhS:"正义",enD:"to promote fair and equal treatment for all",zhD:"促進公平和平等的對待",zhSD:"促进公正公平地对待一切人事物"},
+  {en:"KNOWLEDGE",zh:"知識",zhS:"知识",enD:"to learn and contribute valuable knowledge",zhD:"學習並分享有價值的知識",zhSD:"学习并贡献有价值的知识"},
+  {en:"LEADERSHIP",zh:"領導",zhS:"领导力",enD:"to inspire and guide others",zhD:"激勵並引導他人",zhSD:"激励并引导他人"},
+  {en:"LEISURE",zh:"休閒",zhS:"休闲",enD:"to take time to relax and enjoy",zhD:"放鬆並享受時光",zhSD:"花时间放松和享受"},
+  {en:"LOVED",zh:"被愛",zhS:"被爱",enD:"to be loved by those close to me",zhD:"被親近的人愛著",zhSD:"我被关系亲近的人所爱"},
+  {en:"LOVING",zh:"愛人",zhS:"爱",enD:"to give love to others",zhD:"將愛給予他人",zhSD:"给予他人爱"},
+  {en:"MASTERY",zh:"精通",zhS:"胜任感",enD:"to be competent in my everyday activities",zhD:"在日常活動中展現能力",zhSD:"胜任自己日常生活里的方方面面"},
+  {en:"MINDFULNESS",zh:"靜觀",zhS:"觉察当下",enD:"to live conscious and mindful of the present moment",zhD:"活在當下，覺察生活",zhSD:"觉察当下，自知自觉地生活"},
+  {en:"MODERATION",zh:"適度",zhS:"中庸",enD:"to avoid excesses and find a middle ground",zhD:"避免極端，找到中庸之道",zhSD:"不极端、不过度，找到中间的平衡状态"},
+  {en:"MONOGAMY",zh:"一夫一妻",zhS:"一夫一妻",enD:"to have one close, loving relationship",zhD:"擁有一段親密的關係",zhSD:"拥有亲密相爱的夫妻关系"},
+  {en:"MUSIC",zh:"音樂",zhS:"音乐",enD:"to enjoy or express myself in music",zhD:"享受音樂或透過音樂表達自己",zhSD:"在音乐中享受或表达自我"},
+  {en:"NON-CONFORMITY",zh:"非從眾",zhS:"不墨守成规",enD:"to question and challenge authority and norms",zhD:"質疑並挑戰權威與常規",zhSD:"质疑权威、挑战规范"},
+  {en:"NOVELTY",zh:"新奇",zhS:"新颖",enD:"to have a life full of change and variety",zhD:"追求多變的生活",zhSD:"拥有充满变化和多样性的生活"},
+  {en:"NURTURANCE",zh:"養育",zhS:"抚育",enD:"to encourage and support others",zhD:"鼓勵與支持他人",zhSD:"照顾、扶持、培养别人"},
+  {en:"OPENNESS",zh:"開放",zhS:"开放性",enD:"to be open to new experiences, ideas and options",zhD:"接納新體驗、觀點與選擇",zhSD:"对新事物、新观点、新体验保持开放的心态"},
+  {en:"ORDER",zh:"秩序",zhS:"秩序",enD:"to have a life that is well-ordered and organized",zhD:"追求井然有序的生活",zhSD:"生活方式井井有条、组织得当"},
+  {en:"PASSION",zh:"熱情",zhS:"激情",enD:"to have deep feelings about ideas, activities or people",zhD:"對想法、事物或人充滿深情",zhSD:"对人事物都抱有炽热而深刻的情感"},
+  {en:"PATRIOTISM",zh:"愛國",zhS:"爱国主义",enD:"to love, serve and protect my country",zhD:"愛護並服務國家",zhSD:"热爱、服务和保卫我的祖国"},
+  {en:"PLEASURE",zh:"享樂",zhS:"快乐",enD:"to feel good",zhD:"感覺良好",zhSD:"享受生活，心情不错"},
+  {en:"POPULARITY",zh:"受歡迎",zhS:"受欢迎",enD:"to be well-liked by many people",zhD:"被很多人喜歡、擁戴",zhSD:"很多人都喜欢我"},
+  {en:"POWER",zh:"權力",zhS:"权力",enD:"to have control over others",zhD:"掌控他人",zhSD:"能掌控别人"},
+  {en:"PRACTICALITY",zh:"實用",zhS:"实用性",enD:"to focus on what is practical, prudent, and sensible",zhD:"注重實際與謹慎",zhSD:"关注实用的、审慎的及理智的内容"},
+  {en:"PROTECT",zh:"保護",zhS:"保护",enD:"to protect and keep safe those I love",zhD:"保護與確保我所愛之人的安全",zhSD:"保护我所爱的人，让他们感到安全"},
+  {en:"PROVIDE",zh:"供給",zhS:"供给",enD:"to provide for and take care of my family",zhD:"供給和照顧我的家人",zhSD:"为我的家人们提供生活保障并照顾他们"},
+  {en:"PURPOSE",zh:"目標",zhS:"目标性",enD:"to have meaning and direction in my life",zhD:"生活有意義和方向",zhSD:"生活具有意义和方向"},
+  {en:"RATIONALITY",zh:"理性",zhS:"理性",enD:"to be guided by reason, logic and evidence",zhD:"以理性、邏輯和證據作指引",zhSD:"遵从理性与逻辑"},
+  {en:"REALISM",zh:"現實主義",zhS:"现实主义",enD:"to see and act realistically and practically",zhD:"以現實和實際的方式看待和行動",zhSD:"切合现实、符合实际地想和做"},
+  {en:"RESPONSIBILITY",zh:"責任感",zhS:"责任心",enD:"to make and carry out responsible decisions",zhD:"作出負責任的決定",zhSD:"做出负责任的决定，并确保落到实处"},
+  {en:"RISK",zh:"冒險",zhS:"果敢",enD:"to take risks and chances",zhD:"樂於承擔風險並作機會主義者",zhSD:"承担风险，把握机会"},
+  {en:"ROMANCE",zh:"浪漫",zhS:"浪漫",enD:"to have intense, exciting love in my life",zhD:"生活中擁有強烈而激動人心的愛情",zhSD:"人生中拥有炽热强烈、激动人心的爱情"},
+  {en:"SAFETY",zh:"安全",zhS:"安全",enD:"to be safe and secure",zhD:"追求安全、穩妥",zhSD:"感到安全、安心"},
+  {en:"SELF-ACCEPTANCE",zh:"自我接納",zhS:"自我接纳",enD:"to accept myself as I am",zhD:"接納真實的自己",zhSD:"接纳自己本真的样子"},
+  {en:"SELF-CONTROL",zh:"自制力",zhS:"自律",enD:"to be disciplined in my own actions",zhD:"在我的行為中保持自律",zhSD:"管控自己的行为"},
+  {en:"SELF-ESTEEM",zh:"自尊",zhS:"自尊",enD:"to feel good about myself",zhD:"懂得欣賞、尊重自己",zhSD:"对自己感到满意"},
+  {en:"SELF-KNOWLEDGE",zh:"自知之明",zhS:"自知",enD:"to have a deep and honest understanding of myself",zhD:"對自己有深入而誠實的理解",zhSD:"对自己有深刻、真实的认识"},
+  {en:"SERVICE",zh:"服務",zhS:"服务",enD:"to be helpful and of service to others",zhD:"樂於助人，為他人服務",zhSD:"为别人服务"},
+  {en:"SEXUALITY",zh:"性慾",zhS:"性生活",enD:"to have an active and satisfying sex life",zhD:"擁有積極且令人滿意的性生活",zhSD:"拥有活跃和满意的性生活"},
+  {en:"SIMPLICITY",zh:"簡樸",zhS:"纯朴",enD:"to live life simply, with minimal needs",zhD:"生活簡約，需求極少",zhSD:"活得简单，无欲无求"},
+  {en:"SOLITUDE",zh:"獨處",zhS:"独处",enD:"to have time and space where I can be apart from others",zhD:"擁有可以獨處的時間和空間",zhSD:"有自己一个人的时间和空间"},
+  {en:"SPIRITUALITY",zh:"靈性",zhS:"精神生活",enD:"to grow and mature spiritually",zhD:"在靈性上成長和成熟",zhSD:"心灵上的成长与成熟"},
+  {en:"STABILITY",zh:"穩定",zhS:"稳定",enD:"to have a life that stays fairly consistent",zhD:"生活保持相當一致",zhSD:"拥有稳定的生活"},
+  {en:"TOLERANCE",zh:"寬容",zhS:"容纳",enD:"to accept and respect those who differ from me",zhD:"接納和尊重與我不同的人",zhSD:"接纳并尊重与自己不同的人"},
+  {en:"TRADITION",zh:"傳統",zhS:"传统",enD:"to follow respected patterns of the past",zhD:"遵循受人尊重的故有模式",zhSD:"延续受到人们尊敬的固有模式"},
+  {en:"VIRTUE",zh:"美德",zhS:"美德",enD:"to live a morally pure and excellent life",zhD:"過道德純潔和卓越的生活",zhSD:"做人道德高尚，心地纯洁"},
+  {en:"WEALTH",zh:"財富",zhS:"财富",enD:"to have plenty of money",zhD:"擁有充足的金錢",zhSD:"有充足的金钱"},
+  {en:"WORLD PEACE",zh:"世界和平",zhS:"世界和平",enD:"to work to promote peace in the world",zhD:"努力促進世界和平",zhSD:"致力于促进世界的和平"},
+];
+// Shuffle
+const order = VALUES.map((_,i)=>i).sort(()=>Math.random()-0.5);
+const ratings = new Array(100).fill(null);
+let currentIdx = 0;
+let lang = 'en';
+
+// ── Language helpers (en | zh = Traditional | zhS = Simplified) ──
+function isZh()   { return lang === 'zh' || lang === 'zhS'; }
+function vName(v) { return lang === 'en' ? v.en  : lang === 'zhS' ? v.zhS  : v.zh;  }
+function vDesc(v) { return lang === 'en' ? v.enD : lang === 'zhS' ? v.zhSD : v.zhD; }
+function dateLocale() { return lang === 'zh' ? 'zh-TW' : lang === 'zhS' ? 'zh-CN' : 'en-GB'; }
+function cjkFont()    { return lang === 'zhS' ? '"Noto Sans SC", sans-serif' : '"Noto Sans TC", sans-serif'; }
+let modalCardIndex = null;
+
+const PILE_NAMES = {
+  en:  ["Not Important","Somewhat Important","Important","Very Important","Most Important"],
+  zh:  ["不重要","有些重要","重要","非常重要","最重要"],
+  zhS: ["不重要","有些重要","重要","很重要","最重要"]
+};
+
+
+const PILE_COLORS = ["var(--pile-not)","var(--pile-somewhat)","var(--pile-important)","var(--pile-very)","var(--pile-most)"];
+
+const UI = {
+  en: {
+    logo: "Personal Values",
+    progressLabel: (i,n) => `Card ${i} of ${n}`,
+    ratingQ: "How important is this value to you?",
+    lbls: ["Not Important","Somewhat\nImportant","Important","Very Important","Most Important"],
+    doneTitle: "You've sorted all 100 cards",
+    doneBody: "Now you can review each pile and move cards around. Try to narrow your Most Important pile to just 3–5 values.",
+    reviewBtn: "Review My Values",
+    restartBtn: "Start Over",
+    reviewTitle: "My Values",
+    reviewSub: "Tap any card to change its rating. Aim for 3–5 cards in the Most Important pile.",
+    backLabel: "Back",
+    modalQ: "Change rating:",
+    modalClose: "Done",
+    mostAlert: n => n > 5 ? `⚠️ You have ${n} cards in Most Important. Try to narrow it down to 3–5 that truly define you.` : (n > 0 ? `✦ You have ${n} Most Important value${n>1?'s':''}. ${n<=5?'That looks good!':''}` : ''),
+    kofiLabel: 'Support This Work',
+    kofiInfographicTitle: 'Enjoyed this tool?',
+    kofiInfographicBody: 'This app is free. Support further development with any amount you choose.',
+    kofiInfographicBtn: 'Support This Work',
+    attrOriginal: `Original: <em>Personal Values Card Sort</em> — Miller, W. R., C'de Baca, J., Matthews, D. B., & Wilbourne, P. L. (University of New Mexico, 2011). Public domain.`,
+    attrTranslation: `Traditional Chinese version translated by Paul Kong<br>Simplified Chinese version translated by Tianxiang Xin`,
+    attrChinese: `Web App developed by <a href="https://www.drpaulkong.com" target="_blank">Paul Kong (www.drpaulkong.com)</a>`,
+    feedbackLink: `Have feedback to help improve this app? <a href="mailto:info@drpaulkong.com">Send us a note</a>`,
+    kofiReviewMsg: `Found this tool helpful? Support our meaningful work to make mental health resources more freely accessible`,
+    infographicHintReady: `Your most important values are set — generate your infographic below.`,
+    infographicHintNot: n => n === 0
+      ? `Rate some values as Most Important, then narrow them down to 3–5 to generate your infographic.`
+      : `You have ${n} Most Important value${n>1?'s':''}. Aim for 3–5 to generate your infographic.`,
+    confirmBody: 'All your card ratings and notes will be permanently lost. This cannot be undone.',
+    confirmYes: 'Yes, Start Over',
+    confirmNo: 'Keep My Results',
+    resumeTitle: 'Welcome back',
+    resumeBody: 'You have an unfinished session saved on this device.',
+    resumeMeta: (n, notes) => `${n} of 100 cards rated${notes > 0 ? ` · ${notes} note${notes>1?'s':''}` : ''}`,
+    resumeContinue: 'Continue where I left off',
+    resumeFresh: 'Start fresh',
+    notesTitle: 'Notes & Feelings',
+    confirmTitle: 'Start Over?',
+    notesSub: 'Write anything — download at the end to keep',
+    notesFabLabel: '✏️ Notes & Feelings',
+    notesDl: '⬇ Save',
+    notesClose: 'Close',
+    notesPlaceholder: 'Write anything — a feeling, a thought, a question...',
+    notesSubmit: 'Add Note',
+    notesEmpty: 'No notes yet. Jot down anything that comes to mind.',
+    notesContext: c => c,
+    notesDownloadFilename: 'my-values-reflections.txt',
+    sortBackLabel: "Previous card",
+    sortRestartLabel: "Start Over",
+    infographicBtn: "Generate My Values Infographic",
+    infographicToolbar: "Values Infographic",
+    infographicDownload: "⬇ Download",
+    infographicClose: "Close",
+    infographicTitle: "My Most Important Values",
+    infographicSub: "Personal Values Card Sort",
+    startBtn: "Begin",
+    introTitle: "Personal Values Card Sort",
+    introSub: '',
+    introBody: `You will see 100 value cards, one at a time. For each card, decide how important this value is to you in your life. There are no right or wrong answers — only what feels true to you.<br><br>After sorting all cards, you can review each pile and re-rate any card. Try to keep your <em>Most Important</em> pile to just 3–5 cards.`,
+    empty: "No cards in this pile"
+  },
+  zh: {
+    logo: "個人價值觀",
+    progressLabel: (i,n) => `第 ${i} / ${n} 張`,
+    ratingQ: "這個價值觀對你有多重要？",
+    lbls: ["不重要","有些重要","重要","非常重要","最重要"],
+    doneTitle: "你已完成所有100張卡片",
+    doneBody: "現在你可以查看各個分類，並重新為任何卡片評分。試著將「最重要」的卡片縮減至3至5張。",
+    reviewBtn: "查看我的價值觀",
+    restartBtn: "重新開始",
+    reviewTitle: "我的價值觀",
+    reviewSub: "點擊任意卡片可更改評分。請嘗試將「最重要」控制在3–5張。",
+    backLabel: "返回",
+    modalQ: "更改評分：",
+    modalClose: "完成",
+    mostAlert: n => n > 5 ? `⚠️ 你有 ${n} 張「最重要」卡片。建議縮減至3–5張，選出最能代表你的價值觀。` : (n > 0 ? `✦ 你有 ${n} 張「最重要」價值觀。${n<=5?'看起來很棒！':''}` : ''),
+    kofiLabel: '支持這個工作',
+    kofiInfographicTitle: '這個工具對你有幫助嗎？',
+    kofiInfographicBody: '這個應用程式是免費的。歡迎以任何金額支持進一步開發。',
+    kofiInfographicBtn: '支持這個工作',
+    attrOriginal: `原著：<em>Personal Values Card Sort</em> — Miller, W. R., C'de Baca, J., Matthews, D. B., & Wilbourne, P. L.（新墨西哥大學，2011年）。公共領域。`,
+    attrTranslation: `繁體中文版本由 Paul Kong 翻譯`,
+    attrChinese: `網頁應用程式由 <a href="https://www.drpaulkong.com" target="_blank">Paul Kong（www.drpaulkong.com）</a> 開發`,
+    feedbackLink: `對改善此應用程式有任何建議？<a href="mailto:info@drpaulkong.com">歡迎告訴我們</a>`,
+    kofiReviewMsg: `覺得這個工具有幫助？支持我們讓更多心理健康資源免費開放的工作`,
+    infographicHintReady: `你的最重要價值觀已設定好——立即生成你的圖表。`,
+    infographicHintNot: n => n === 0
+      ? `請先將部分卡片評為「最重要」，然後縮減至3–5張以生成圖表。`
+      : `你有 ${n} 張「最重要」卡片。請縮減至3–5張以生成圖表。`,
+    confirmBody: '所有卡片評分和筆記將被永久刪除，此操作無法復原。',
+    confirmYes: '是的，重新開始',
+    confirmNo: '保留我的結果',
+    resumeTitle: '歡迎回來',
+    resumeBody: '這部裝置上有你未完成的練習記錄。',
+    resumeMeta: (n, notes) => `已評分 ${n} / 100 張卡片${notes > 0 ? ` · ${notes} 則筆記` : ''}`,
+    resumeContinue: '繼續上次進度',
+    resumeFresh: '重新開始',
+    notesTitle: '感想筆記',
+    confirmTitle: '確定重新開始？',
+    notesSub: '隨時記錄，完成後可下載儲存',
+    notesFabLabel: '✏️ 感想筆記',
+    notesDl: '⬇ 儲存',
+    notesClose: '關閉',
+    notesPlaceholder: '寫下任何感受、想法或問題……',
+    notesSubmit: '加入',
+    notesEmpty: '還沒有筆記。隨時記下你的想法。',
+    notesContext: c => c,
+    notesDownloadFilename: '我的價值觀感想.txt',
+    sortBackLabel: "上一張",
+    sortRestartLabel: "重新開始",
+    infographicBtn: "生成我的價值觀圖表",
+    infographicToolbar: "價值觀圖表",
+    infographicDownload: "⬇ 下載",
+    infographicClose: "關閉",
+    infographicTitle: "我最重要的價值觀",
+    infographicSub: "個人價值觀排序",
+    startBtn: "開始",
+    introTitle: "個人價值觀排序",
+    introSub: "探索價值觀和目標",
+    introBody: `你將看到100張價值觀卡片，每次一張。對於每張卡片，判斷這個價值觀在你生活中的重要程度。沒有對錯之分——只有對你而言真實的感受。<br><br>完成所有卡片後，你可以查看各個分類並重新評分。請嘗試將「最重要」的卡片控制在3至5張以內。`,
+    empty: "此分類暫無卡片"
+  },
+  zhS: {
+    logo: "个人价值观",
+    progressLabel: (i,n) => `第 ${i} / ${n} 张`,
+    ratingQ: "这个价值观对你有多重要？",
+    lbls: ["不重要","有些重要","重要","很重要","最重要"],
+    doneTitle: "你已完成全部100张卡片",
+    doneBody: "现在你可以查看各个分类，并重新为任何卡片评分。试着将「最重要」的卡片缩减至3至5张。",
+    reviewBtn: "查看我的价值观",
+    restartBtn: "重新开始",
+    reviewTitle: "我的价值观",
+    reviewSub: "点击任意卡片可更改评分。请尽量将「最重要」控制在3–5张。",
+    backLabel: "返回",
+    modalQ: "更改评分：",
+    modalClose: "完成",
+    mostAlert: n => n > 5 ? `⚠️ 你有 ${n} 张「最重要」卡片。建议缩减至3–5张。` : (n > 0 ? `✦ 你有 ${n} 张「最重要」价值观。${n<=5?'看起来很棒！':''}` : ''),
+    infographicHintReady: `你的最重要价值观已设定好——立即生成你的图表。`,
+    infographicHintNot: n => n === 0
+      ? `请先将部分卡片评为「最重要」，然后缩减至3–5张以生成图表。`
+      : `你有 ${n} 张「最重要」卡片。请缩减至3–5张以生成图表。`,
+    kofiLabel: '支持这个工作',
+    kofiInfographicTitle: '觉得这个工具有帮助？支持我们让更多心理健康资源免费开放的工作',
+    kofiInfographicBody: '',
+    kofiInfographicBtn: '支持这个工作',
+    attrOriginal: `原著：<em>Personal Values Card Sort</em> — Miller, W. R., C'de Baca, J., Matthews, D. B., & Wilbourne, P. L.（新墨西哥大学，2011年）。公共领域。`,
+    attrTranslation: `简体中文版本由辛挺翔翻译`,
+    attrChinese: `网页应用程式由 <a href="https://www.drpaulkong.com" target="_blank">Paul Kong（www.drpaulkong.com）</a> 开发`,
+    feedbackLink: `对改善此应用程式有任何建议？<a href="mailto:info@drpaulkong.com">欢迎告诉我们</a>`,
+    kofiReviewMsg: '觉得这个工具有帮助？支持我们让更多心理健康资源免费开放的工作',
+    sortBackLabel: "上一张",
+    sortRestartLabel: "重新开始",
+    infographicBtn: "生成我的价值观图表",
+    infographicToolbar: "价值观图表",
+    infographicDownload: "⬇ 下载",
+    infographicClose: "关闭",
+    infographicTitle: "我最重要的价值观",
+    infographicSub: "个人价值观排序",
+    startBtn: "开始",
+    introTitle: "个人价值观排序",
+    introSub: '',
+    introBody: `你将看到100张价值观卡片，每次一张。对于每张卡片，判断这个价值观在你生活中的重要程度。没有对错之分——只有对你而言真实的感受。<br><br>完成所有卡片后，你可以查看各个分类并重新评分。请尝试将「最重要」的卡片控制在3至5张以内。`,
+    empty: "此分类暂无卡片",
+    notesFabLabel: '✏️ 感想笔记',
+    notesTitle: '感想笔记',
+    notesSub: '随时记录，完成后可下载保存',
+    notesDl: '⬇ 保存',
+    notesClose: '关闭',
+    notesPlaceholder: '写下任何感受、想法或问题……',
+    notesSubmit: '加入',
+    notesEmpty: '还没有笔记。随时记下你的想法。',
+    notesContext: c => c,
+    notesDownloadFilename: '我的价值观感想.txt',
+    notesDlTipIOS: '保存后，打开「文件」App 在下载文件夹中找到你的笔记。可直接分享至邮件、WhatsApp 或发给你的治疗师。',
+    notesDlTipAndroid: '保存后，打开「文件管理器」在下载文件夹中找到你的笔记。可分享至邮件、WhatsApp 或任何其他应用程式。',
+    notesDlTipDesktop: '笔记将以文字文件保存至下载文件夹，可直接打开、打印或分享给你的治疗师。',
+    dlTipIOS: '下载后，打开「文件」App → 长按图片 → 点选「存储图像」，即可加入相册。',
+    dlTipAndroid: '下载后，打开「相册」或「文件管理器」，在下载文件夹中找到图片。',
+    dlTipDesktop: '图片将保存至你的下载文件夹，之后可自行移动至任何位置。',
+    confirmTitle: '确定重新开始？',
+    confirmBody: '所有卡片评分和笔记将被永久删除，此操作无法复原。',
+    confirmYes: '是的，重新开始',
+    confirmNo: '保留我的结果',
+    resumeTitle: '欢迎回来',
+    resumeBody: '这部装置上有你未完成的练习记录。',
+    resumeMeta: (n, notes) => `已评分 ${n} / 100 张卡片${notes > 0 ? ` · ${notes} 则笔记` : ''}`,
+    resumeContinue: '继续上次进度',
+    resumeFresh: '重新开始',
+  }
+};
+
+function t(key, ...args) {
+  const v = UI[lang][key];
+  return typeof v === 'function' ? v(...args) : v;
+}
+
+function setLang(l) {
+  lang = l;
+  const labels = {en:'EN', zh:'繁中', zhS:'简中'};
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.trim() === labels[l]));
+  track('language_switched', { language: l });
+  refreshUI();
+}
+
+function refreshUI() {
+  document.documentElement.lang = lang === 'zh' ? 'zh-Hant' : lang === 'zhS' ? 'zh-Hans' : 'en';
+  document.getElementById('header-logo').textContent = t('logo');
+  // attribution (intro screen only)
+  document.getElementById('attr-original').innerHTML = t('attrOriginal');
+  document.getElementById('attr-translation').innerHTML = t('attrTranslation');
+  document.getElementById('attr-chinese').innerHTML = t('attrChinese');
+  // footer feedback — guarded since footer is after script tag
+  const ffEl = document.getElementById('footer-feedback');
+  if (ffEl) ffEl.innerHTML = t('feedbackLink');
+  document.getElementById('kofi-label-intro').textContent = t('kofiLabel');
+  document.getElementById('kofi-infographic-title').textContent = t('kofiReviewMsg');
+  document.getElementById('kofi-infographic-body').textContent = '';
+  document.getElementById('kofi-label-infographic').textContent = t('kofiInfographicBtn');
+  // notes
+  document.getElementById('notes-fab-label').textContent = t('notesFabLabel');
+  document.getElementById('notes-title').textContent = t('notesTitle');
+  document.getElementById('notes-sub').textContent = t('notesSub');
+  document.getElementById('notes-dl-btn').textContent = t('notesDl');
+  document.getElementById('notes-close-btn').textContent = t('notesClose');
+  document.getElementById('notes-textarea').placeholder = t('notesPlaceholder');
+  document.getElementById('notes-submit-btn').textContent = t('notesSubmit');
+  renderNotesEntries();
+  // intro
+  document.getElementById('intro-title').textContent = t('introTitle');
+  const sub = document.getElementById('intro-subtitle');
+  sub.style.display = 'none';
+  document.getElementById('intro-body').innerHTML = t('introBody');
+  document.getElementById('start-btn').textContent = t('startBtn');
+  // sort
+  if (currentIdx < 100) renderCard(currentIdx);
+  document.getElementById('rating-label').textContent = t('ratingQ');
+  document.getElementById('sort-back-label').textContent = t('sortBackLabel');
+  document.getElementById('sort-restart-label').textContent = t('sortRestartLabel');
+  document.getElementById('infographic-btn-label').textContent = t('infographicBtn');
+  document.getElementById('toolbar-title').textContent = t('infographicToolbar');
+  document.getElementById('dl-btn').textContent = t('infographicDownload');
+  document.getElementById('close-infographic-btn').textContent = t('infographicClose');
+  const lblEls = ['lbl0','lbl1','lbl2','lbl3','lbl4'];
+  t('lbls').forEach((l,i) => document.getElementById(lblEls[i]).textContent = l);
+  // done
+  document.getElementById('done-title').textContent = t('doneTitle');
+  document.getElementById('done-body').innerHTML = t('doneBody');
+  document.getElementById('review-btn-done').textContent = t('reviewBtn');
+  document.getElementById('restart-btn').textContent = t('restartBtn');
+  document.getElementById('confirm-title').textContent = t('confirmTitle');
+  document.getElementById('confirm-body').textContent = t('confirmBody');
+  document.getElementById('confirm-yes').textContent = t('confirmYes');
+  document.getElementById('confirm-no').textContent = t('confirmNo');
+  // Resume dialog (re-render if open)
+  const resumeOpen = document.getElementById('resume-overlay').classList.contains('open');
+  if (resumeOpen) {
+    document.getElementById('resume-title').textContent = t('resumeTitle');
+    document.getElementById('resume-body').textContent = t('resumeBody');
+    document.getElementById('resume-continue-btn').textContent = t('resumeContinue');
+    document.getElementById('resume-fresh-btn').textContent = t('resumeFresh');
+  }
+  // review
+  document.getElementById('review-title').textContent = t('reviewTitle');
+  document.getElementById('review-subtitle').textContent = t('reviewSub');
+  document.getElementById('back-label').textContent = t('backLabel');
+  // modal labels
+  const mLbls = ['mlbl0','mlbl1','mlbl2','mlbl3','mlbl4'];
+  t('lbls').forEach((l,i) => document.getElementById(mLbls[i]).innerHTML = l.replace(' ','<br>'));
+  document.getElementById('modal-qlabel').textContent = t('modalQ');
+  document.getElementById('modal-close-btn').textContent = t('modalClose');
+
+  const reviewVisible = document.getElementById('screen-review').style.display !== 'none';
+  if (reviewVisible) renderReview();
+}
+
+function renderCard(idx) {
+  const v = VALUES[order[idx]];
+  document.getElementById('card-num').textContent = `${idx+1} / 100`;
+  const valueText = vName(v);
+  const valueEl = document.getElementById('card-value');
+  valueEl.textContent = valueText;
+
+  // Auto-scale font size based on text length
+  const len = valueText.length;
+  let fontSize;
+  if (lang === 'en') {
+    if (len <= 8)       fontSize = '2.8rem';
+    else if (len <= 12) fontSize = '2.3rem';
+    else if (len <= 16) fontSize = '1.9rem';
+    else                fontSize = '1.6rem';
+  } else {
+    // Chinese characters are wider — scale more aggressively
+    if (len <= 4)       fontSize = '2.8rem';
+    else if (len <= 6)  fontSize = '2.3rem';
+    else                fontSize = '1.9rem';
+  }
+  valueEl.style.fontSize = fontSize;
+
+  document.getElementById('card-desc').textContent = vDesc(v);
+  document.getElementById('progress-label').textContent = t('progressLabel', idx+1, 100);
+  document.getElementById('progress-pct').textContent = Math.round(idx/100*100)+'%';
+  document.getElementById('progress-fill').style.width = (idx/100*100)+'%';
+
+  // Highlight previously selected rating if revisiting
+  const existingRating = ratings[order[idx]];
+  document.querySelectorAll('.rate-btn').forEach(b => {
+    b.classList.toggle('selected', existingRating !== null && parseInt(b.dataset.rating) === existingRating);
+  });
+
+  // Enable/disable back button
+  document.getElementById('sort-back-btn').disabled = idx === 0;
+}
+
+function track(eventName, params) {
+  if (typeof gtag === 'function') gtag('event', eventName, params || {});
+}
+
+function startSort() {
+  document.getElementById('screen-intro').style.display = 'none';
+  document.getElementById('screen-sort').style.display = 'flex';
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('notes-fab').style.display = 'flex';
+  renderCard(0);
+  track('sort_started', { language: lang });
+}
+
+function goBack() {
+  if (currentIdx === 0) return;
+  currentIdx--;
+  const card = document.getElementById('card-main');
+  card.classList.add('card-animating');
+  setTimeout(() => card.classList.remove('card-animating'), 350);
+  setTimeout(() => renderCard(currentIdx), 180);
+}
+
+function rate(r) {
+  const cardIdx = order[currentIdx];
+  ratings[cardIdx] = r;
+  saveSession();
+
+  const card = document.getElementById('card-main');
+  card.classList.add('card-animating');
+  setTimeout(() => card.classList.remove('card-animating'), 350);
+
+  currentIdx++;
+  if (currentIdx >= 100) {
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-pct').textContent = '100%';
+    track('sort_completed', { language: lang });
+    setTimeout(showDone, 300);
+  } else {
+    if ([25, 50, 75].includes(currentIdx)) {
+      track('sort_milestone', { cards_rated: currentIdx, language: lang });
+    }
+    setTimeout(() => renderCard(currentIdx), 180);
+  }
+}
+
+function showDone() {
+  document.getElementById('screen-sort').style.display = 'none';
+  document.getElementById('screen-done').style.display = 'flex';
+  document.getElementById('progress-wrap').style.display = 'none';
+}
+
+function showReview() {
+  document.getElementById('screen-done').style.display = 'none';
+  document.getElementById('screen-review').style.display = 'block';
+  track('review_opened', { language: lang });
+  renderReview();
+}
+
+function renderReview() {
+  const grid = document.getElementById('piles-grid');
+  const pileNames = PILE_NAMES[lang];
+  grid.innerHTML = '';
+
+  // Most important alert
+  const mostCount = ratings.filter(r => r === 4).length;
+  const alertEl = document.getElementById('most-alert');
+  const alertTxt = t('mostAlert', mostCount);
+  alertEl.innerHTML = alertTxt;
+  alertEl.classList.toggle('show', !!alertTxt);
+
+  // Infographic button: always visible, dimmed unless 3–5
+  const ready = mostCount >= 3 && mostCount <= 5;
+  document.getElementById('infographic-btn').disabled = !ready;
+  document.getElementById('infographic-hint').textContent = ready
+    ? t('infographicHintReady')
+    : t('infographicHintNot', mostCount);
+
+  for (let p = 4; p >= 0; p--) {
+    const cards = ratings.map((r,i)=>({r,i})).filter(({r})=>r===p);
+    const section = document.createElement('div');
+    section.className = 'pile-section';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'pile-header';
+    hdr.innerHTML = `<div class="pile-dot" style="background:${PILE_COLORS[p]}"></div>
+      <div class="pile-title" style="color:${PILE_COLORS[p]}">${pileNames[p]}</div>
+      <div class="pile-count">${cards.length} card${cards.length!==1?'s':''}</div>`;
+    section.appendChild(hdr);
+
+    const cardsDiv = document.createElement('div');
+    cardsDiv.className = 'pile-cards';
+
+    if (cards.length === 0) {
+      cardsDiv.innerHTML = `<div class="empty-pile">${t('empty')}</div>`;
+    } else {
+      cards.sort((a,b) => {
+        const na = vName(VALUES[a.i]);
+        const nb = vName(VALUES[b.i]);
+        return na.localeCompare(nb, lang === 'zhS' ? 'zh-CN' : undefined);
+      });
+      cards.forEach(({i}) => {
+        const v = VALUES[i];
+        const mc = document.createElement('div');
+        mc.className = 'mini-card';
+        mc.innerHTML = `<div class="mv">${vName(v)}</div><div class="md">${vDesc(v)}</div>`;
+        mc.onclick = () => openModal(i);
+        cardsDiv.appendChild(mc);
+      });
+    }
+
+    section.appendChild(cardsDiv);
+    grid.appendChild(section);
+  }
+}
+
+function openModal(cardIndex) {
+  modalCardIndex = cardIndex;
+  const v = VALUES[cardIndex];
+  document.getElementById('modal-num').textContent = `#${VALUES.indexOf(v)+1}`;
+  document.getElementById('modal-value').textContent = vName(v);
+  document.getElementById('modal-desc').textContent = vDesc(v);
+
+  document.querySelectorAll('.modal-rate-btn').forEach(b => {
+    b.classList.toggle('selected', parseInt(b.dataset.rating) === ratings[cardIndex]);
+  });
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function reRate(r) {
+  if (modalCardIndex === null) return;
+  ratings[modalCardIndex] = r;
+  document.querySelectorAll('.modal-rate-btn').forEach(b => {
+    b.classList.toggle('selected', parseInt(b.dataset.rating) === r);
+  });
+  saveSession();
+  renderReview();
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+  modalCardIndex = null;
+}
+
+function confirmRestart() {
+  document.getElementById('confirm-overlay').classList.add('open');
+}
+
+function closeConfirm() {
+  document.getElementById('confirm-overlay').classList.remove('open');
+}
+
+function restart() {
+  closeConfirm();
+  track('sort_restarted', { language: lang });
+  currentIdx = 0;
+  ratings.fill(null);
+  notes.length = 0;
+  updateNotesBadge();
+  order.sort(()=>Math.random()-0.5);
+  clearSession();
+  document.getElementById('screen-sort').style.display = 'none';
+  document.getElementById('screen-done').style.display = 'none';
+  document.getElementById('screen-review').style.display = 'none';
+  document.getElementById('screen-intro').style.display = 'flex';
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('notes-fab').style.display = 'none';
+}
+
+function generateInfographic() {
+  const mostCards = ratings
+    .map((r,i) => ({r,i}))
+    .filter(({r}) => r === 4)
+    .map(({i}) => VALUES[i]);
+
+  track('infographic_generated', {
+    language: lang,
+    values_count: mostCards.length,
+    values: mostCards.map(v => vName(v)).join(', ')
+  });
+
+  const n = mostCards.length;
+  const W = 1120;
+  const cardH = 168;
+  const cardGap = 28;
+  const headerH = 260;
+  const footerH = 80;
+  const H = headerH + n * (cardH + cardGap) - cardGap + footerH + 80;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // ── Ivory background ──
+  ctx.fillStyle = '#f7f3ea';
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle warm tint strip at top
+  ctx.fillStyle = 'rgba(120,80,40,0.04)';
+  ctx.fillRect(0, 0, W, 180);
+
+  // Double border
+  ctx.strokeStyle = 'rgba(83,74,183,0.3)';
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, 28, 28, W-56, H-56, 16);
+  ctx.stroke();
+  ctx.strokeStyle = 'rgba(83,74,183,0.1)';
+  ctx.lineWidth = 1;
+  roundRect(ctx, 38, 38, W-76, H-76, 12);
+  ctx.stroke();
+
+  // Corner ornaments
+  const corners = [[62,62],[W-62,62],[62,H-62],[W-62,H-62]];
+  corners.forEach(([x,y]) => {
+    ctx.fillStyle = 'rgba(83,74,183,0.45)';
+    ctx.font = '20px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('✦', x, y);
+  });
+
+  // ── Header ──
+  // Thin purple rule
+  drawRule(ctx, 80, 88, W-80, 'rgba(83,74,183,0.3)', 1);
+
+  // Subtitle
+  ctx.fillStyle = 'rgba(83,74,183,0.75)';
+  ctx.font = '700 22px "Lato", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.letterSpacing = '0.22em';
+  ctx.fillText(t('infographicSub').toUpperCase(), W/2, 116);
+  ctx.letterSpacing = '0';
+
+  // Main title — bold, auto-fit within border
+  ctx.fillStyle = '#2a1e10';
+  ctx.textAlign = 'center';
+  const maxTitleW = W - 180;
+  let titleSize = isZh() ? 62 : 68;
+  const titleFont = isZh() ? cjkFont() : '"Playfair Display", Georgia, serif';
+  ctx.font = `700 ${titleSize}px ${titleFont}`;
+  while (ctx.measureText(t('infographicTitle')).width > maxTitleW && titleSize > 32) {
+    titleSize -= 2;
+    ctx.font = `700 ${titleSize}px ${titleFont}`;
+  }
+  ctx.fillText(t('infographicTitle'), W/2, 196);
+
+  // Bottom rule of header
+  drawRule(ctx, 80, 228, W-80, 'rgba(83,74,183,0.3)', 1);
+
+  // ── Value cards: purple hue progression dark→light ──
+  const purpleRamp = [
+    ['#3c2e90','#a898f8','#e8e4ff'],
+    ['#4e40a8','#b8aeff','#eeeaff'],
+    ['#6255c0','#c8c0ff','#f0eeff'],
+    ['#7a6cd8','#d4ceff','#f5f3ff'],
+    ['#9a90e0','#e0d8ff','#faf8ff'],
+  ].slice(0, n);
+
+  const cardX = 80;
+  const cardW = W - 160;
+  const cardTop = headerH;
+
+  mostCards.forEach((v, idx) => {
+    const y = cardTop + idx * (cardH + cardGap);
+    const [bg, accent, textLight] = purpleRamp[idx];
+
+    // Card fill
+    ctx.fillStyle = bg;
+    roundRect(ctx, cardX, y, cardW, cardH, 14);
+    ctx.fill();
+
+    // Left accent bar (lighter shade)
+    ctx.fillStyle = accent;
+    roundRectLeft(ctx, cardX, y, 7, cardH, 14);
+    ctx.fill();
+
+    // Value name
+    ctx.fillStyle = '#ffffff';
+    const valFont = isZh() ? cjkFont() : '"Playfair Display", Georgia, serif';
+    ctx.font = `500 ${isZh()?'50px':'52px'} ${valFont}`;
+    ctx.textAlign = 'left';
+    ctx.fillText(vName(v), cardX + 36, y + 76);
+
+    // Description
+    ctx.fillStyle = 'rgba(255,255,255,0.62)';
+    const descFont = isZh() ? cjkFont() : '"Lato", sans-serif';
+    ctx.font = `300 25px ${descFont}`;
+    ctx.textAlign = 'left';
+    wrapText(ctx, vDesc(v), cardX + 36, y + 118, cardW - 90, 32);
+
+    // Decorative star right
+    ctx.fillStyle = accent + 'aa';
+    ctx.font = '26px serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('✦', cardX + cardW - 30, y + cardH/2 + 10);
+  });
+
+  // ── Footer ──
+  const footerY = cardTop + n * (cardH + cardGap) + 12;
+  drawRule(ctx, 80, footerY, W-80, 'rgba(83,74,183,0.2)', 1);
+  ctx.fillStyle = 'rgba(83,74,183,0.45)';
+  ctx.font = '300 21px "Lato", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(new Date().toLocaleDateString(dateLocale(), {year:'numeric',month:'long',day:'numeric'}), W/2, footerY + 34);
+
+  // ── Show ──
+  const wrap = document.getElementById('infographic-canvas-wrap');
+  wrap.innerHTML = '';
+  wrap.appendChild(canvas);
+  const tipEl = document.getElementById('dl-tip');
+  if (tipEl) { tipEl.textContent = getDeviceTips().infographic; tipEl.classList.add('visible'); }
+  document.getElementById('infographic-overlay').classList.add('open');
+}
+
+// Helper: rounded rect path
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+// Helper: left-only rounded rect (for accent bar)
+function roundRectLeft(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w, y);
+  ctx.lineTo(x+w, y+h);
+  ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function drawRule(ctx, x1, y, x2, color, lw) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lw;
+  ctx.beginPath();
+  ctx.moveTo(x1, y); ctx.lineTo(x2, y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function wrapText(ctx, text, x, y, maxW, lineH) {
+  const words = text.split(' ');
+  let line = '';
+  for (let i = 0; i < words.length; i++) {
+    const test = line + words[i] + ' ';
+    if (ctx.measureText(test).width > maxW && i > 0) {
+      ctx.fillText(line, x, y);
+      line = words[i] + ' ';
+      y += lineH;
+    } else { line = test; }
+  }
+  ctx.fillText(line, x, y);
+}
+
+function closeInfographic(e) {
+  if (e && e.target !== document.getElementById('infographic-overlay')) return;
+  document.getElementById('infographic-overlay').classList.remove('open');
+}
+
+function downloadInfographic() {
+  const canvas = document.querySelector('#infographic-canvas-wrap canvas');
+  if (!canvas) return;
+  track('infographic_downloaded', { language: lang });
+  const link = document.createElement('a');
+  link.download = lang === 'zh' ? '我的價值觀.png' : lang === 'zhS' ? '我的价值观.png' : 'my-values.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+// ── NOTES JOURNAL ──
+const notes = [];
+
+// ── DEVICE-SPECIFIC DOWNLOAD TIPS ──
+function getDeviceTips() {
+  const ua = navigator.userAgent || '';
+  const isIOS     = /iPhone|iPad|iPod/i.test(ua);
+  const isAndroid = /Android/i.test(ua);
+  if (lang === 'zhS') {
+    const k = isIOS ? 'IOS' : isAndroid ? 'Android' : 'Desktop';
+    return { infographic: t('dlTip' + k), notes: t('notesDlTip' + k) };
+  }
+  if (isIOS) return {
+    infographic: lang === 'zh'
+      ? '下載後，開啟「檔案」App → 長按圖片 → 點選「儲存影像」，即可加入相片圖庫。'
+      : 'After downloading, open the Files app → tap and hold the image → "Save Image" to add it to your Photos.',
+    notes: lang === 'zh'
+      ? '儲存後，開啟「檔案」App 在下載資料夾中找到你的筆記。可直接分享至郵件、WhatsApp 或傳給你的治療師。'
+      : 'After saving, open the Files app to find your notes in Downloads. You can share it to Mail, WhatsApp, or your therapist from there.'
+  };
+  if (isAndroid) return {
+    infographic: lang === 'zh'
+      ? '下載後，開啟「相簿」或「檔案管理員」，在下載資料夾中找到圖片。'
+      : 'After downloading, open your Gallery or Files app to find the image in your Downloads folder.',
+    notes: lang === 'zh'
+      ? '儲存後，開啟「檔案管理員」在下載資料夾中找到你的筆記。可分享至郵件、WhatsApp 或任何其他應用程式。'
+      : 'After saving, open your Files app to find your notes in Downloads. You can share it to Mail, WhatsApp, or any app from there.'
+  };
+  return {
+    infographic: lang === 'zh'
+      ? '圖片將儲存至你的下載資料夾，之後可自行移動至任何位置。'
+      : 'The image will be saved to your Downloads folder. You can then move it wherever you like.',
+    notes: lang === 'zh'
+      ? '筆記將以文字檔案儲存至下載資料夾，可直接開啟、列印或分享給你的治療師。'
+      : 'Your notes will be saved as a text file in your Downloads folder, ready to open, print, or share with your therapist.'
+  };
+}
+
+function getCurrentContext() {
+  const screenSort = document.getElementById('screen-sort').style.display !== 'none';
+  const screenReview = document.getElementById('screen-review').style.display !== 'none';
+  const screenDone = document.getElementById('screen-done').style.display !== 'none';
+  if (screenSort) {
+    const v = VALUES[order[Math.min(currentIdx, 99)]];
+    return lang === 'en' ? `While sorting: ${v.en}` : lang === 'zhS' ? `排序中：${v.zhS}` : `排序中：${v.zh}`;
+  }
+  if (screenDone)   return lang === 'en' ? 'After completing the sort'  : lang === 'zhS' ? '完成排序后'   : '完成排序後';
+  if (screenReview) return lang === 'en' ? 'While reviewing my values' : lang === 'zhS' ? '回顾价值观时' : '回顧價值觀時';
+  return lang === 'en' ? 'Before starting' : lang === 'zhS' ? '开始前' : '開始前';
+}
+
+function openNotes() {
+  document.getElementById('notes-context-tag').textContent = getCurrentContext();
+  renderNotesEntries();
+  const tipEl = document.getElementById('notes-dl-tip');
+  if (tipEl) { tipEl.textContent = getDeviceTips().notes; tipEl.classList.add('visible'); }
+  document.getElementById('notes-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('notes-textarea').focus(), 150);
+}
+
+function closeNotes() {
+  document.getElementById('notes-overlay').classList.remove('open');
+}
+
+function submitNote() {
+  const ta = document.getElementById('notes-textarea');
+  const text = ta.value.trim();
+  if (!text) return;
+  notes.push({
+    text,
+    context: getCurrentContext(),
+    time: new Date().toLocaleTimeString(dateLocale(), {hour:'2-digit', minute:'2-digit'}),
+    date: new Date().toLocaleDateString(dateLocale(), {day:'numeric', month:'short'})
+  });
+  ta.value = '';
+  renderNotesEntries();
+  updateNotesBadge();
+  saveSession();
+}
+
+function deleteNote(idx) {
+  notes.splice(idx, 1);
+  renderNotesEntries();
+  updateNotesBadge();
+  saveSession();
+}
+
+function renderNotesEntries() {
+  const container = document.getElementById('notes-entries');
+  if (!container) return;
+  if (notes.length === 0) {
+    container.innerHTML = `<div class="notes-empty">${t('notesEmpty')}</div>`;
+    return;
+  }
+  container.innerHTML = notes.map((n, i) => `
+    <div class="note-entry">
+      <div class="note-entry-meta">
+        <span>${n.date} ${n.time} · ${n.context}</span>
+        <button class="note-entry-delete" data-idx="${i}">✕</button>
+      </div>
+      <div class="note-entry-text">${n.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>
+  `).join('');
+  container.scrollTop = container.scrollHeight;
+  container.querySelectorAll('.note-entry-delete').forEach(btn => {
+    btn.addEventListener('click', () => deleteNote(parseInt(btn.dataset.idx)));
+  });
+}
+
+function updateNotesBadge() {
+  const badge = document.getElementById('notes-badge');
+  badge.textContent = notes.length;
+  badge.classList.toggle('show', notes.length > 0);
+}
+
+function downloadNotes() {
+  if (notes.length === 0) return;
+  track('notes_downloaded', { language: lang, notes_count: notes.length });
+  const dateStr = new Date().toLocaleDateString(dateLocale(), {year:'numeric',month:'long',day:'numeric'});
+  const header = lang === 'en'
+    ? `My Notes & Feelings — ${dateStr}\nPersonal Values Card Sort\n${'─'.repeat(50)}\n\n`
+    : lang === 'zhS'
+    ? `我的感想笔记 — ${dateStr}\n个人价值观排序\n${'─'.repeat(50)}\n\n`
+    : `我的感想筆記 — ${dateStr}\n個人價值觀排序\n${'─'.repeat(50)}\n\n`;
+  const body = notes.map((n, i) =>
+    `[${i+1}] ${n.date} ${n.time}\n${n.context}\n\n${n.text}\n`
+  ).join('\n' + '─'.repeat(40) + '\n\n');
+  const blob = new Blob([header + body], {type: 'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = t('notesDownloadFilename');
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── SESSION PERSISTENCE ──
+const SESSION_KEY = 'pvcs_session_v1';
+
+function saveSession() {
+  try {
+    const data = {
+      order: order.slice(),
+      ratings: ratings.slice(),
+      currentIdx,
+      lang,
+      notes: notes.slice(),
+      savedAt: Date.now()
+    };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(data));
+  } catch(e) { /* localStorage unavailable (private mode etc) */ }
+}
+
+function clearSession() {
+  try { localStorage.removeItem(SESSION_KEY); } catch(e) {}
+}
+
+function loadSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function applySession(data) {
+  order.splice(0, order.length, ...data.order);
+  ratings.splice(0, ratings.length, ...data.ratings);
+  currentIdx = data.currentIdx;
+  lang = data.lang || 'en';
+  notes.splice(0, notes.length, ...(data.notes || []));
+  const lbls = {en:'EN', zh:'繁中', zhS:'简中'};
+  document.querySelectorAll('.lang-btn').forEach(b =>
+    b.classList.toggle('active', b.textContent.trim() === lbls[lang])
+  );
+}
+
+function showResumeDialog(data) {
+  const ratedCount = data.ratings.filter(r => r !== null).length;
+  const notesCount = (data.notes || []).length;
+  document.getElementById('resume-title').textContent = t('resumeTitle');
+  document.getElementById('resume-body').textContent = t('resumeBody');
+  document.getElementById('resume-meta').textContent = t('resumeMeta', ratedCount, notesCount);
+  document.getElementById('resume-continue-btn').textContent = t('resumeContinue');
+  document.getElementById('resume-fresh-btn').textContent = t('resumeFresh');
+  document.getElementById('resume-overlay').classList.add('open');
+}
+
+function closeResumeDialog() {
+  document.getElementById('resume-overlay').classList.remove('open');
+}
+
+// Wire resume dialog on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('notes-fab').addEventListener('click', openNotes);
+  document.getElementById('notes-close-btn').addEventListener('click', closeNotes);
+  document.getElementById('notes-dl-btn').addEventListener('click', downloadNotes);
+  document.getElementById('notes-submit-btn').addEventListener('click', submitNote);
+  document.getElementById('notes-panel').addEventListener('click', function(e) { e.stopPropagation(); });
+  document.getElementById('notes-overlay').addEventListener('click', closeNotes);
+  document.getElementById('notes-textarea').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submitNote();
+  });
+  document.getElementById('confirm-yes').addEventListener('click', restart);
+  document.getElementById('confirm-no').addEventListener('click', closeConfirm);
+  document.getElementById('confirm-overlay').addEventListener('click', function(e) {
+    if (e.target === document.getElementById('confirm-overlay')) closeConfirm();
+  });
+
+  // Resume buttons
+  document.getElementById('resume-continue-btn').addEventListener('click', function() {
+    closeResumeDialog();
+    const data = loadSession();
+    if (!data) return;
+    applySession(data);
+    refreshUI();
+    updateNotesBadge();
+    // Restore correct screen
+    const ratedCount = data.ratings.filter(r => r !== null).length;
+    if (ratedCount >= 100) {
+      showDone();
+    } else {
+      document.getElementById('screen-intro').style.display = 'none';
+      document.getElementById('screen-sort').style.display = 'flex';
+      document.getElementById('progress-wrap').style.display = 'block';
+      document.getElementById('notes-fab').style.display = 'flex';
+      renderCard(currentIdx);
+    }
+    track('session_resumed', { language: lang, cards_rated: ratedCount });
+  });
+
+  document.getElementById('resume-fresh-btn').addEventListener('click', function() {
+    closeResumeDialog();
+    clearSession();
+    // Already showing intro with fresh state
+  });
+
+  // Check for saved session on load
+  const saved = loadSession();
+  if (saved && saved.ratings && saved.ratings.filter(r => r !== null).length > 0) {
+    setTimeout(() => showResumeDialog(saved), 400);
+  }
+
+  // Footer feedback — set now that footer exists in DOM
+  const ffEl = document.getElementById('footer-feedback');
+  if (ffEl) ffEl.innerHTML = t('feedbackLink');
+
+  // Hide notes FAB on intro screen; show on all other screens
+  document.getElementById('notes-fab').style.display = 'none';
+});
+
+// init — run after the full DOM exists (notes panel, resume dialog and footer come after this script)
+document.addEventListener('DOMContentLoaded', refreshUI);
+</script>
+
+<!-- RESUME SESSION MODAL -->
+<div id="resume-overlay">
+  <div class="resume-dialog">
+    <div class="resume-icon">🔖</div>
+    <div class="resume-title" id="resume-title">Welcome back</div>
+    <div class="resume-body" id="resume-body">You have an unfinished session.</div>
+    <div class="resume-meta" id="resume-meta"></div>
+    <div class="resume-actions">
+      <button class="resume-continue" id="resume-continue-btn">Continue where I left off</button>
+      <button class="resume-fresh" id="resume-fresh-btn">Start fresh</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTES FAB -->
+<button class="notes-fab" id="notes-fab">
+  <span id="notes-fab-label">Notes &amp; Feelings</span>
+  <div class="notes-badge" id="notes-badge">0</div>
+</button>
+
+<!-- NOTES OVERLAY -->
+<div id="notes-overlay">
+  <div class="notes-panel" id="notes-panel">
+    <div class="notes-header">
+      <div class="notes-header-left">
+        <div class="notes-header-title" id="notes-title">Notes &amp; Feelings</div>
+        <div class="notes-header-sub" id="notes-sub">Write anything — download at the end to keep</div>
+      </div>
+      <div class="notes-header-actions">
+        <button class="notes-dl-btn" id="notes-dl-btn">⬇ Save</button>
+        <button class="notes-close-btn" id="notes-close-btn">Close</button>
+      </div>
+    </div>
+    <div class="notes-context-tag" id="notes-context-tag"></div>
+    <div class="notes-entries" id="notes-entries"></div>
+    <div class="notes-input-area">
+      <textarea class="notes-textarea" id="notes-textarea" placeholder="Write anything — a feeling, a thought, a question..."></textarea>
+      <div class="notes-submit-row">
+        <button class="notes-submit-btn" id="notes-submit-btn">Add Note</button>
+      </div>
+    </div>
+    <div class="notes-dl-tip" id="notes-dl-tip"></div>
+  </div>
+</div>
+
+<footer id="site-footer">
+  <p class="footer-feedback" id="footer-feedback"></p>
+</footer>
+
+</body>
+</html>
